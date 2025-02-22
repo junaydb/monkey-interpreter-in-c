@@ -34,6 +34,6 @@ extern const char *IF;
 extern const char *ELSE;
 extern const char *RETURN;
 
-Token token_init(const char *token_type, char byte);
+void token_init(Token *dest, const char *token_type, const char *byte);
 
 #endif

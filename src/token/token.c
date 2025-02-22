@@ -39,7 +39,7 @@ const char *IF = "IF";
 const char *ELSE = "ELSE";
 const char *RETURN = "RETURN";
 
-Token token_init(Token *dest, const char *token_type, char byte) {
-  token->type = token_type;
-  token->literal = byte;
+void token_init(Token *dest, const char *token_type, const char *byte) {
+  dest->type = token_type;
+  dest->literal = byte;
 }

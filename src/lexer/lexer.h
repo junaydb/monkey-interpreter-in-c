@@ -1,3 +1,4 @@
+#include "../token/token.h"
 #include <stddef.h>
 
 #ifndef LEXER_H
@@ -11,8 +12,8 @@ typedef struct Lexer {
   char ch;
 } Lexer;
 
-void lexer_init(Lexer *l, const char *input);
 void lexer_read_char(Lexer *l);
-const char *lexer_next_token(Lexer *l);
+void lexer_init(Lexer *l, const char *input);
+void lexer_next_token(Token *dest, Lexer *l);
 
 #endif

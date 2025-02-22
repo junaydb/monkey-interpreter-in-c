@@ -1,5 +1,6 @@
 #include "../lexer/lexer.h"
 #include "../token/token.h"
+#include <stdio.h>
 
 void test_next_token(Lexer *l) {
   char *input = "let five = 5;"
@@ -24,8 +25,8 @@ void test_next_token(Lexer *l) {
                 "10 != 9;";
 
   typedef struct {
-    TokenType expected_type;
-    char *expected_literal;
+    const char *expected_type;
+    const char *expected_literal;
   } TestToken;
 
   TestToken test_set[] = {
@@ -55,9 +56,27 @@ void test_next_token(Lexer *l) {
       {INT, "10"},       {NOT_EQ, "!="},     {INT, "9"},
       {SEMICOLON, ";"},  {ENDOFFILE, ""}};
 
+  int test_set_len = sizeof(test_set) / sizeof(TestToken);
+
   lexer_init(l, input);
 
-  for (int i = 0; i < l->input_len; i++) {
-    char *token = l->lexer_next_token();
+  for (int i = 0; i < test_set_len; i++) {
+    Token token;
+    lexer_next_token(&token, l);
+
+    const char *cur_type = token.type;
+    const char *expected_type = test_set[i].expected_type;
+    const char *cur_literal = token.literal;
+    const char *expected_literal = test_set[i].expected_literal;
+
+    if (cur_type != expected_type) {
+      printf("lexer_tests[%d]: unexpected token type. expected=%s, got=%s", i,
+             expected_type, cur_type);
+    }
+
+    if (cur_literal != expected_literal) {
+      printf("lexer_tests[%d]: unexpected token type. expected=%s, got=%s", i,
+             expected_literal, cur_literal);
+    }
   }
 }
