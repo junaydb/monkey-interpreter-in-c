@@ -1,28 +1,28 @@
-#include "../lexer/lexer.h"
-#include "../token/token.h"
+#include "lexer_test.h"
 #include <stdio.h>
+#include <string.h>
 
-void test_next_token(Lexer *l) {
-  char *input = "let five = 5;"
+void lexer_test_next_token(void) {
+  const char *input = "let five = 5;"
 
-                "let ten = 10; "
+                      "let ten = 10; "
 
-                "let add = fn(x, y) {"
-                "  x + y;"
-                "};"
+                      "let add = fn(x, y) {"
+                      "  x + y;"
+                      "};"
 
-                "let result = add(five, ten);"
-                "!-/*5;"
-                "5 < 10 > 5;"
+                      "let result = add(five, ten);"
+                      "!-/*5;"
+                      "5 < 10 > 5;"
 
-                "if (5 < 10) {"
-                "	return true;"
-                "} else {"
-                "	return false;"
-                "}"
+                      "if (5 < 10) {"
+                      "	return true;"
+                      "} else {"
+                      "	return false;"
+                      "}"
 
-                "10 == 10;"
-                "10 != 9;";
+                      "10 == 10;"
+                      "10 != 9;";
 
   typedef struct {
     const char *expected_type;
@@ -58,25 +58,27 @@ void test_next_token(Lexer *l) {
 
   int test_set_len = sizeof(test_set) / sizeof(TestToken);
 
-  lexer_init(l, input);
+  Lexer l;
+  lexer_init(&l, input);
 
   for (int i = 0; i < test_set_len; i++) {
-    Token token;
-    lexer_next_token(&token, l);
+    Token token = {"", ""};
+
+    lexer_next_token(&token, &l);
 
     const char *cur_type = token.type;
     const char *expected_type = test_set[i].expected_type;
     const char *cur_literal = token.literal;
     const char *expected_literal = test_set[i].expected_literal;
 
-    if (cur_type != expected_type) {
-      printf("lexer_tests[%d]: unexpected token type. expected=%s, got=%s", i,
-             expected_type, cur_type);
+    if (strcmp(cur_type, expected_type) != 0) {
+      printf("lexer_tests[%d]: incorrect token type.    expected=%s, got=%s\n",
+             i, expected_type, cur_type);
     }
 
-    if (cur_literal != expected_literal) {
-      printf("lexer_tests[%d]: unexpected token type. expected=%s, got=%s", i,
-             expected_literal, cur_literal);
+    if (strcmp(cur_literal, expected_literal) != 0) {
+      printf("lexer_tests[%d]: incorrect token literal. expected=%s, got=%s\n",
+             i, expected_literal, cur_literal);
     }
   }
 }

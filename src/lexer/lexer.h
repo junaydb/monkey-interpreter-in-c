@@ -6,10 +6,10 @@
 
 typedef struct Lexer {
   const char *input;
-  size_t input_len;
-  unsigned int position;
-  unsigned int read_position;
-  char ch;
+  unsigned int input_len;
+  unsigned int position;      // position in input (points to current char)
+  unsigned int read_position; // reading position in input (after current char)
+  char ch;                    // char under examination
 } Lexer;
 
 void lexer_read_char(Lexer *l);
