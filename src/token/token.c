@@ -8,7 +8,7 @@ const char *ENDOFFILE = "EOF";
 
 // Identifiers + literals
 const char *IDENT = "IDENT"; // add, foobar, x, y, ...
-const char *INT = "INT";     // 1343456
+const char *INT = "INT";
 
 // Operators
 const char *ASSIGN = "=";
@@ -61,20 +61,24 @@ void token_set_type_from_ident(Token *dest) {
     return;
   }
 
-  if (strcmp(dest->literal, "fn") == 0) {
+  if (!strcmp(dest->literal, "fn")) {
     dest->type = FUNCTION;
-  } else if (strcmp(dest->literal, "let") == 0) {
+  } else if (!strcmp(dest->literal, "let")) {
     dest->type = LET;
-  } else if (strcmp(dest->literal, "true") == 0) {
+  } else if (!strcmp(dest->literal, "true")) {
     dest->type = TRUE;
-  } else if (strcmp(dest->literal, "false") == 0) {
+  } else if (!strcmp(dest->literal, "false")) {
     dest->type = FALSE;
-  } else if (strcmp(dest->literal, "if") == 0) {
+  } else if (!strcmp(dest->literal, "if")) {
     dest->type = IF;
-  } else if (strcmp(dest->literal, "else") == 0) {
+  } else if (!strcmp(dest->literal, "else")) {
     dest->type = ELSE;
-  } else if (strcmp(dest->literal, "return") == 0) {
+  } else if (!strcmp(dest->literal, "return")) {
     dest->type = RETURN;
+  } else if (!strcmp(dest->literal, "==")) {
+    dest->type = EQ;
+  } else if (!strcmp(dest->literal, "!=")) {
+    dest->type = NOT_EQ;
   } else {
     dest->type = IDENT;
   }

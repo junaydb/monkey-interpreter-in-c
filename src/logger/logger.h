@@ -3,6 +3,7 @@
 
 enum LogType { ERROR, SUCCESS, WARNING };
 
-void logger(const char *message, enum LogType log_type);
+void logger(const char *message_title, const char *message,
+            enum LogType log_type);
 
 #endif
