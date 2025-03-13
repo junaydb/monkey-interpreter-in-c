@@ -1,31 +1,35 @@
-#include "../lexer/lexer.h"
-#include "../token/token.h"
+#include "lexer_test.h"
+#include "../logger/logger.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void test_next_token(Lexer *l) {
-  char *input = "let five = 5;"
+void lexer_test_next_token(void) {
+  const char *input = "let five = 5;"
 
-                "let ten = 10; "
+                      "let ten = 10;"
 
-                "let add = fn(x, y) {"
-                "  x + y;"
-                "};"
+                      "let add = fn(x, y) {"
+                      "  x + y;"
+                      "};"
 
-                "let result = add(five, ten);"
-                "!-/*5;"
-                "5 < 10 > 5;"
+                      "let result = add(five, ten);"
 
-                "if (5 < 10) {"
-                "	return true;"
-                "} else {"
-                "	return false;"
-                "}"
+                      "!-/*5;"
+                      "5 < 10 > 5;"
 
-                "10 == 10;"
-                "10 != 9;";
+                      "if (5 < 10) {"
+                      "	return true;"
+                      "} else {"
+                      "	return false;"
+                      "}"
+
+                      "10 == 10;"
+                      "10 != 9;";
 
   typedef struct {
-    TokenType expected_type;
-    char *expected_literal;
+    const char *expected_type;
+    const char *expected_literal;
   } TestToken;
 
   TestToken test_set[] = {
@@ -55,9 +59,57 @@ void test_next_token(Lexer *l) {
       {INT, "10"},       {NOT_EQ, "!="},     {INT, "9"},
       {SEMICOLON, ";"},  {ENDOFFILE, ""}};
 
-  lexer_init(l, input);
+  int test_set_len = sizeof(test_set) / sizeof(TestToken);
 
-  for (int i = 0; i < l->input_len; i++) {
-    char *token = l->lexer_next_token();
+  Lexer l = lexer_init(input);
+
+  Token token = {"", ""};
+
+  char *prev_token; // Just for pretty-printing
+
+  for (int i = 0; i < test_set_len; i++) {
+    lexer_next_token(&token, &l);
+
+    const char *cur_type = token.type;
+    const char *expected_type = test_set[i].expected_type;
+    char *cur_literal = token.literal;
+    const char *expected_literal = test_set[i].expected_literal;
+
+    prev_token = cur_literal;
+
+    // // Pretty print tokens
+    // if (!strcmp(cur_literal, ";")) {
+    //   printf(";\n");
+    // } else if (!strcmp(cur_literal, "{")) {
+    //   printf(" {\n  ");
+    // } else {
+    //   printf(" %s", cur_literal);
+    // }
+
+    /*
+     * Messy make shift test logging, needs cleaning up.
+     */
+    char *test_num;
+    char *error_message;
+
+    asprintf(&test_num, "lexer_tests[%d]: ", i);
+
+    if (strcmp(cur_type, expected_type) != 0) {
+      asprintf(&error_message,
+               "incorrect token type. expected=\"%s\", got=\"%s\"",
+               expected_type, cur_type);
+      logger(test_num, error_message, ERROR);
+      exit(1);
+    }
+
+    if (strcmp(cur_literal, expected_literal) != 0) {
+      asprintf(&error_message,
+               "incorrect token literal. expected=\"%s\", got=\"%s\"",
+               expected_literal, cur_literal);
+      logger(test_num, error_message, ERROR);
+      exit(1);
+    }
   }
+
+  logger("lexer_test.c: ", "All tests passed.", SUCCESS);
 }

@@ -3,7 +3,7 @@
 
 typedef struct Token {
   const char *type;
-  const char *literal;
+  char *literal;
 } Token;
 
 extern const char *ILLEGAL;
@@ -34,6 +34,7 @@ extern const char *IF;
 extern const char *ELSE;
 extern const char *RETURN;
 
-Token token_init(const char *token_type, char byte);
+void token_init(Token *dest, const char *token_type, char byte);
+void token_set_type_from_ident(Token *dest);
 
 #endif
