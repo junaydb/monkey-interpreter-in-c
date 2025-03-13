@@ -103,6 +103,23 @@ void lexer_read_char(Lexer *l) {
   l->read_position += 1;
 }
 
+void create_two_char_token(Token *dest, Lexer *l) {
+  char eq[3];
+  eq[0] = l->ch;
+  lexer_read_char(l);
+  eq[1] = l->ch;
+  eq[2] = '\0';
+
+  dest->literal = malloc(3);
+  if (dest == NULL) {
+    printf("malloc() error from `create_two_char_token` in `lexer.c`");
+    exit(1);
+  }
+  memcpy(dest->literal, eq, 3);
+
+  token_set_type_from_ident(dest);
+}
+
 void lexer_next_token(Token *dest, Lexer *l) {
   skip_whitespace(l);
 
@@ -148,40 +165,14 @@ void lexer_next_token(Token *dest, Lexer *l) {
     break;
   case '=':
     if (peek_char(l) == '=') {
-      char eq[3];
-      eq[0] = l->ch;
-      lexer_read_char(l);
-      eq[1] = l->ch;
-      eq[2] = '\0';
-
-      dest->literal = malloc(3);
-      if (dest == NULL) {
-        printf("malloc() error from `lexer_read_char` in `lexer.c`");
-        exit(1);
-      }
-      memcpy(dest->literal, eq, 3);
-
-      token_set_type_from_ident(dest);
+      create_two_char_token(dest, l);
     } else {
       token_init(dest, ASSIGN, l->ch);
     }
     break;
   case '!':
     if (peek_char(l) == '=') {
-      char eq[3];
-      eq[0] = l->ch;
-      lexer_read_char(l);
-      eq[1] = l->ch;
-      eq[2] = '\0';
-
-      dest->literal = malloc(3);
-      if (dest == NULL) {
-        printf("malloc() error from `lexer_read_char` in `lexer.c`");
-        exit(1);
-      }
-      memcpy(dest->literal, eq, 3);
-
-      token_set_type_from_ident(dest);
+      create_two_char_token(dest, l);
     } else {
       token_init(dest, BANG, l->ch);
     }

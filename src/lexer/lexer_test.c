@@ -65,6 +65,8 @@ void lexer_test_next_token(void) {
 
   Token token = {"", ""};
 
+  char *prev_token; // Just for pretty-printing
+
   for (int i = 0; i < test_set_len; i++) {
     lexer_next_token(&token, &l);
 
@@ -72,6 +74,17 @@ void lexer_test_next_token(void) {
     const char *expected_type = test_set[i].expected_type;
     char *cur_literal = token.literal;
     const char *expected_literal = test_set[i].expected_literal;
+
+    prev_token = cur_literal;
+
+    // // Pretty print tokens
+    // if (!strcmp(cur_literal, ";")) {
+    //   printf(";\n");
+    // } else if (!strcmp(cur_literal, "{")) {
+    //   printf(" {\n  ");
+    // } else {
+    //   printf(" %s", cur_literal);
+    // }
 
     /*
      * Messy make shift test logging, needs cleaning up.
