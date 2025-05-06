@@ -1,2 +1,40 @@
-build:
-	gcc -o bin/out src/main.c src/lexer/lexer.c src/token/token.c src/lexer/lexer_test.c src/logger/logger.c src/repl/repl.c
+# --- toolchain --------------------------------------------------------
+CC       := gcc
+CFLAGS   := -Wall -Wextra -std=c2x -pedantic -MMD -MP
+LDFLAGS  :=
+
+# --- output & source dirs --------------------------------------------
+TARGET_EXEC := out
+BUILD_DIR   := build
+SRC_DIR     := src
+
+# --- collect sources & objects ---------------------------------------
+SRCS := $(shell find $(SRC_DIR) -type f -name '*.c')
+OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
+DEPS := $(OBJS:.o=.d)
+
+# --- phony targets ---------------------------------------------------
+.PHONY: all clean
+
+# --- default ---------------------------------------------------
+all: $(BUILD_DIR)/$(TARGET_EXEC)
+
+# --- link ------------------------------------------------------------
+# $@ = build/final_program
+# $^ = all objects
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	@mkdir -p $(@D)
+	$(CC) $^ -o $@ $(LDFLAGS)
+
+# --- compile ---------------------------------------------------------
+# builds build/.../foo.o from src/.../foo.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+# --- include auto-generated header deps -----------------------------
+-include $(DEPS)
+
+# --- clean -----------------------------------------------------------
+clean:
+	rm -rf $(BUILD_DIR)
